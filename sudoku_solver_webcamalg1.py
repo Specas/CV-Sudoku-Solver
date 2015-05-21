@@ -37,19 +37,55 @@ while cap.isOpened():
 	# finding the contour with the largest perimeter
 	largest_perimeter_val = 0
 	largest_perimeter_pos = 0
+	largest_bounding_area = 0
+	largest_bounding_pos = 0
 	for i in xrange(len(contours)):
-		p = cv2.arcLength(contours[i], False) # True takes into account only closed curves
-		if p > largest_perimeter_val:
-			largest_perimeter_val = p
-			largest_perimeter_pos = i
+		p = cv2.arcLength(contours[i], True) # True takes into account only closed curves
 
-	# We now find a bounding rectangle over this
-	x,y,w,h = cv2.boundingRect(contours[largest_perimeter_pos])
-	# Displaying on the frame itself
-	frame = cv2.rectangle(frame, (x, y), (x+w, y+h), (10,200,5), 2)
+		# bounding rect
+		x,y,w,h = cv2.boundingRect(contours[i])
+		a = w*h
+		# Finding contour with maximum bounding rectangle area
+		if a > largest_bounding_area:
+			largest_bounding_area = a
+			largest_bounding_pos = i
+
+
+	
+
+	# contour with largest perimeter
+	cont = contours[largest_bounding_pos]
+
+
 
 	# Filling the contour with largest perimeter
-	cv2.drawContours(frame, [contours[largest_perimeter_pos]], 0, (100,100,177), -1)
+	cv2.drawContours(frame, [contours[largest_bounding_pos]], 0, (100,100,177), -1)
+
+	# Finding the extreme ends of the contour
+	leftmost = tuple(cont[cont[:,:,0].argmin()][0])
+	rightmost = tuple(cont[cont[:,:,0].argmax()][0])
+	topmost = tuple(cont[cont[:,:,1].argmin()][0])
+	botmost = tuple(cont[cont[:,:,1].argmax()][0])
+
+	# Finding the corners of the grid using these
+	topleft = (leftmost[0], topmost[1])
+	topright = (rightmost[0], topmost[1])
+	botleft = (leftmost[0], botmost[1])
+	botright = (rightmost[0], botmost[1])
+
+	# Drawing the extremem points as circles
+	frame = cv2.circle(frame, leftmost, 5, (0,200,100), -1)
+	frame = cv2.circle(frame, rightmost, 5, (0,200,100), -1)
+	frame = cv2.circle(frame, topmost, 5, (0,200,100), -1)
+	frame = cv2.circle(frame, botmost, 5, (0,200,100), -1)
+	frame = cv2.circle(frame, topleft, 5, (0,0, 255), -1)
+	frame = cv2.circle(frame, topright, 5, (0,0, 255), -1)
+	frame = cv2.circle(frame, botleft, 5, (0,0, 255), -1)
+	frame = cv2.circle(frame, botright, 5, (0,0, 255), -1)
+
+
+
+	
 
 
 	# displaying
