@@ -151,8 +151,6 @@ while cap.isOpened():
 			# If we need to draw the edges
 			# cv2.line(puzzle, pt1, pt2, (10,200,100), 2)
 
-			# We measure the slope of each line
-			# If the slope is less than 1 (angle < 45)
 			
 			if theta >= (np.pi/180.0)* 65 and theta <= (np.pi/180.0)*115:
 				# If the horizontal makes a slightly inclined angle between
