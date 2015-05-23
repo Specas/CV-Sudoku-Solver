@@ -1,2 +1,5 @@
 # CV-Sudoku-Solver-alg
-Test algorithms for the openCV sudoku solver. The final application makes use of some of these algorithms.
+
+The repo consists of test algorithms for the sudoku solver CV app. It also consists of the main application code.
+
+The main application code is placed in the App folder. All the files placed outside are the test files.
