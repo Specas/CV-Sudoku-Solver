@@ -6,6 +6,7 @@
 import cv2 
 import numpy as np
 import preprocess as pr
+import get_square as gs
 
 # webcam input
 cap = cv2.VideoCapture(0)
@@ -25,6 +26,9 @@ initial_puzzle_frame = final_puzzle_frame = []
 # The rotation matrix
 rot_matrix = []
 
+# The grid image only for display verification
+grid_image = []
+
 while cap.isOpened():
 
 	_, frame = cap.read()
@@ -34,7 +38,9 @@ while cap.isOpened():
 	final_frame = frame
 
 
-	# finding initial corner points ------------------------------------------------------------------
+	# Preprocessing starts here ----------------------------------------------------------------------
+
+	# finding initial corner points -------------------------------------------------------------
 
 	# calling the init function to give the dilated frame
 	initial_dil = pr.init(frame)
@@ -53,7 +59,7 @@ while cap.isOpened():
 		final_puzzle_frame = initial_puzzle_frame # inital value
 
 
-		# now we find the angle correction and hence the new corners ----------------------------------
+		# now we find the angle correction and hence the new corners -----------------------------
 
 		# finding the hough lines. First we use canny edge detection
 		edges = cv2.Canny(initial_puzzle_frame, 50, 200, 3)
@@ -125,8 +131,8 @@ while cap.isOpened():
 				final_puzzle_frame = cv2.warpPerspective(final_frame, final_pers_trans, (477,477))
 
 
-
-
+	# Preprocessing ends here -------------------------------------------------------------------------
+	grid_image = gs.drawGrid(final_puzzle_frame)
 
 
 
@@ -137,7 +143,8 @@ while cap.isOpened():
 	cv2.imshow('frame', initial_frame)
 	# cv2.imshow('dil frame', initial_dil)
 	# cv2.imshow('initial persp', initial_puzzle_frame)
-	cv2.imshow('final persp', final_puzzle_frame)
+	# cv2.imshow('final persp', final_puzzle_frame)
+	cv2.imshow('grid image', grid_image)
 
 	if cv2.waitKey(1) & 0xff == 27:
 		break
