@@ -7,6 +7,7 @@ import cv2
 import numpy as np
 import preprocess as pr
 import get_square as gs
+import tess_ocr as ocr
 
 # webcam input
 cap = cv2.VideoCapture(0)
@@ -29,6 +30,11 @@ rot_matrix = []
 # The grid image only for display verification
 grid_image = []
 
+# Variable to check if the grid has been correctly preprocessed
+# The puzzle has been successfully preprocessed only if it passes through
+# both stages of the preprocessing - initial and the angle correction
+checkGridProcessed = False
+
 while cap.isOpened():
 
 	_, frame = cap.read()
@@ -36,6 +42,9 @@ while cap.isOpened():
 	# frame copy for initial processes
 	initial_frame = frame
 	final_frame = frame
+
+	# Initially, assume that the grid has not been preprocessed
+	gridProcessed = False
 
 
 	# Preprocessing starts here ----------------------------------------------------------------------
@@ -130,9 +139,17 @@ while cap.isOpened():
 				final_pers_trans = cv2.getPerspectiveTransform(final_corner, puzzle_corner)
 				final_puzzle_frame = cv2.warpPerspective(final_frame, final_pers_trans, (477,477))
 
+				# If the program control reaches here, it means that both the
+				# preprocessing sections have been successfully executed
+
+				# Thus we can set the check variable to true
+				checkGridProcessed = True
+
 
 	# Preprocessing ends here -------------------------------------------------------------------------
 	grid_image = gs.drawGrid(final_puzzle_frame)
+
+
 
 
 
