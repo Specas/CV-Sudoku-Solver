@@ -148,6 +148,7 @@ while cap.isOpened():
 
 	# Preprocessing ends here -------------------------------------------------------------------------
 	grid_image = gs.drawGrid(final_puzzle_frame)
+	
 
 
 
