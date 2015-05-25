@@ -5,9 +5,10 @@
 
 import cv2 
 import numpy as np
-import preprocess as pr
+import preprocess as pre
 import get_square as gs
 import tess_ocr as ocr
+import postprocess as pst
 
 # webcam input
 cap = cv2.VideoCapture(0)
@@ -52,11 +53,11 @@ while cap.isOpened():
 	# finding initial corner points -------------------------------------------------------------
 
 	# calling the init function to give the dilated frame
-	initial_dil = pr.init(frame)
+	initial_dil = pre.init(frame)
 
 	# we get the corners of the sudoku grid. 
 	# This is the first run, hence there is no angle correction
-	initial_corner = pr.contourEndPoints(initial_dil)
+	initial_corner = pre.contourEndPoints(initial_dil)
 
 	# proceed only if there are contours
 	if initial_corner != 0:
@@ -98,6 +99,7 @@ while cap.isOpened():
 				# The maximum inclination of the puzzle that we allow is +/- 25 degrees
 				if theta >= (np.pi/180.0)* 65 and theta <= (np.pi/180.0)*115: 
 
+
 					# theta is the inclination of the line
 					# for horizontal lines, theta is 90. It decreases while turning anticlockwise
 					# and vice versa
@@ -109,6 +111,12 @@ while cap.isOpened():
 
 					# vertical lines cannot make such angles, unless the puzzle is
 					# inclined way too much
+					break
+
+				elif (theta >= 0  and theta <= (np.pi/180.0)*20) or (theta >= (np.pi/180.0)*170 and theta <= (np.pi/180.0)*180):
+
+					# for vertical lines
+					gridAngleDeg = (int((theta*180)/np.pi+90)%180)
 					break
 
 		# Now that we have the inclination of the line, we can just rotate our image
@@ -127,8 +135,8 @@ while cap.isOpened():
 			final_frame = cv2.warpAffine(final_frame, rot_matrix, (640,480))
 
 			# calling the preprocess functions again to apply angle correction
-			final_dil = pr.init(final_frame)
-			final_corner = pr.contourEndPoints(final_dil)
+			final_dil = pre.init(final_frame)
+			final_corner = pre.contourEndPoints(final_dil)
 
 			# proceed if there is a contour
 			if final_corner != 0:
@@ -148,7 +156,20 @@ while cap.isOpened():
 
 	# Preprocessing ends here -------------------------------------------------------------------------
 	grid_image = gs.drawGrid(final_puzzle_frame)
-	
+
+	# Postprocessing starts here ----------------------------------------------------------------------
+
+	# threshold the only puzzle image
+	end_puzzle = pst.processGrid(final_puzzle_frame)
+
+	# list of numpy arrays that are the squares of the puzzle
+	list_of_squares = pst.extractSquares(end_puzzle)
+
+	# Now we send each of the squares for ocr through the postprocess module
+	string_of_digits = ocr.readNumber(end_puzzle[0:100,0:477])
+	print string_of_digits
+
+
 
 
 
@@ -163,6 +184,10 @@ while cap.isOpened():
 	# cv2.imshow('initial persp', initial_puzzle_frame)
 	# cv2.imshow('final persp', final_puzzle_frame)
 	cv2.imshow('grid image', grid_image)
+	# cv2.imshow('end puzzle', end_puzzle)
+	# cv2.imshow('square', list_of_squares[0])
+
+	# cv2.imshow('test', end_puzzle[0:100, 0:53])
 
 	if cv2.waitKey(1) & 0xff == 27:
 		break
