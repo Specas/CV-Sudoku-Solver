@@ -1,7 +1,7 @@
 # THIS PROGRAM MAKES USE OF THE PYTHON TESSERACT LIBRARY FOR OPTICAL CHARACTER
 # RECOGNITION (OCR)
 
-# THE SUDOKU FILE THAT WAS PREPROCESSED IS SENT TO THIS CODE WHICH THEN RETURNS
+# THE SUDOKU FILE THAT WAS POSTPROCESSED IS SENT TO THIS CODE WHICH THEN RETURNS
 # THE NUMBERS TO THE CORE PROGRAM
 
 
@@ -9,7 +9,7 @@ import Image
 import pytesseract as pt
 import cv2
 
-def readNumbers(img):
+def readNumber(img):
 
 	# square is the image which is to be subjected to ocr
 	# but img is a numpy array. Thus we first convert it to a PIL image
