@@ -9,14 +9,16 @@ def drawGrid(grid):
 
 	# grid is the input that is perspective transformed
 	# drawing the 9*9 grid on this image
+	# another array to draw on as we dont want to draw on the original
+	gr = grid.copy()
 	for i in xrange(9):
 
 		square_width = 477/9
 		# Drawing columns
-		cv2.line(grid, (i*square_width, 0), (i*square_width, 477), (150,10,100), 1)
+		cv2.line(gr, (i*square_width, 0), (i*square_width, 477), (150,10,100), 1)
 
 		# Drawing rows
-		cv2.line(grid, (0, i*square_width), (477, i*square_width), (150, 10, 100), 1)
+		cv2.line(gr, (0, i*square_width), (477, i*square_width), (150, 10, 100), 1)
 
 	# returning 
-	return grid
+	return gr
