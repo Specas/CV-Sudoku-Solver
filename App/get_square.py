@@ -5,7 +5,7 @@
 import numpy as np 
 import cv2 
 
-def drawGrid(square):
+def drawGrid(grid):
 
 	# grid is the input that is perspective transformed
 	# drawing the 9*9 grid on this image
