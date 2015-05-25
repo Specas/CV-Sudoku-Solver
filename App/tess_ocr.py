@@ -7,11 +7,14 @@
 
 import Image
 import pytesseract as pt
+import cv2
 
-def readNumbers():
+def readNumbers(img):
 
-	# img is the image which is to be subjected to ocr
-	return pt.image_to_string(Image.open('numForOCR.jpg'))
+	# square is the image which is to be subjected to ocr
+	# but img is a numpy array. Thus we first convert it to a PIL image
+	# and then use pytesseract
+	return pt.image_to_string(Image.fromarray(img))
 
 
 
